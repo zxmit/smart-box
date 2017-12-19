@@ -40,4 +40,15 @@
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="basePackage" value="com.zmsk.smartbox.mapper"></property>
 	</bean>
+
+	<bean id="props" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations">
+        <array>
+            <value>classpath:resource/system.properties</value>
+        </array>
+    </property>
+</bean>
+	<bean class="com.zmsk.smartbox.pojo.Config" id="config">
+		<property name="props" ref="props"/>
+	</bean>
 </beans>

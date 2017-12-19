@@ -19,7 +19,7 @@
 		</mvc:message-converters>
 	</mvc:annotation-driven>
 
-	<bean id="resthandlerExceptionResolver" class="com.zmsk.smartbox.common.exception.RestHandlerExceptionResolver" />
+	<bean id="resthandlerExceptionResolver" class="com.zmsk.smartbox.controller.common.exception.RestHandlerExceptionResolver" />
 
 <!-- 
 	<bean

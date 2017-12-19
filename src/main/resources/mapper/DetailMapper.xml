@@ -1,0 +1,174 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zmsk.smartbox.mapper.DetailMapper" >
+
+    <resultMap id="StoreDetailMap" type="com.zmsk.smartbox.pojo.StoreDetail" >
+        <id column="detail_id" property="detailId" jdbcType="VARCHAR" />
+        <result column="cell_id" property="cellId" jdbcType="VARCHAR" />
+        <result column="deliverer_id" property="delivererId" jdbcType="VARCHAR" />
+        <result column="receiver_id" property="receiverId" jdbcType="VARCHAR" />
+        <result column="take_code" property="takeCode" jdbcType="VARCHAR" />
+        <result column="store_date" property="storeDate" jdbcType="DATE" />
+        <result column="take_date" property="takeDate" jdbcType="DATE" />
+        <result column="state" property="state" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List" >
+        detail_id,cell_id,deliverer_id,receiver_id,take_code,store_date,take_date
+    </sql>
+
+    <insert id="insertStoreDetail" parameterType="com.zmsk.smartbox.pojo.StoreDetail" >
+      INSERT INTO store_detail
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="detailId != null" >detail_id,</if>
+            <if test="cellId != null" >cell_id,</if>
+            <if test="delivererId != null" >deliverer_id,</if>
+            <if test="receiverId != null" >receiver_id,</if>
+            <if test="takeCode != null" >take_code,</if>
+            <if test="storeDate != null" >store_date,</if>
+            <if test="takeDate != null" >take_date,</if>
+            <if test="state != null" >state,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="detailId != null" >#{detailId,jdbcType=VARCHAR},</if>
+            <if test="cellId != null" >#{cellId,jdbcType=VARCHAR},</if>
+            <if test="delivererId != null" >#{delivererId,jdbcType=VARCHAR},</if>
+            <if test="receiverId != null" >#{receiverId,jdbcType=VARCHAR},</if>
+            <if test="takeCode != null" >#{takeCode,jdbcType=VARCHAR},</if>
+            <if test="storeDate != null" >#{storeDate,jdbcType=VARCHAR},</if>
+            <if test="takeDate != null" >#{takeDate,jdbcType=VARCHAR},</if>
+            <if test="state != null" >#{state,jdbcType=CHAR},</if>
+        </trim>
+
+    </insert>
+
+    <select id="isTakeCodeExist" resultType="java.lang.Integer" >
+      SELECT
+        count(*)
+      FROM
+        store_detail t1,cell t2
+      WHERE
+        t2.box_id=#{boxId,jdbcType=VARCHAR} and t1.take_code=#{takeCode,jdbcType=VARCHAR} and t1.state='1';
+    </select>
+
+    <update id="updateStoreDetail" parameterType="com.zmsk.smartbox.pojo.StoreDetail">
+      UPDATE store_detail SET state=#{state,jdbcType=CHAR} WHERE detail_id=#{detailId,jdbcType=CHAR}
+    </update>
+
+    <select id="queryStoredItemByTakeCode" resultType="java.lang.String" parameterType="com.zmsk.smartbox.pojo.StoreDetail" >
+      select
+        t2.cell_num
+      from
+        store_detail t1,cell t2
+      where
+        t1.state='1' and t1.cell_id=t2.cell_id and t1.take_code=#{takeCode,jdbcType=VARCHAR}
+    </select>
+
+    <select id="queryStoredItemByUserId" resultType="java.lang.String" >
+      select
+        t2.cell_num
+      from
+        store_detail t1,cell t2
+      where
+        t1.state='1' and t1.cell_id=t2.cell_id and t1.receiver_id=#{receiverId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="queryCurrentStoredItemByUserId" resultType="java.lang.String" parameterType="com.zmsk.smartbox.pojo.StoreDetail" >
+      select
+        t1.cell_num
+      from
+        cell t1,store_detail t2
+      where
+        t1.cell_num=#{cellNum,jdbcType=VARCHAR}
+        and t1.box_id=#{boxId,jdbcType=VARCHAR}
+        and t2.receiver_id=#{receiverId,jdbcType=VARCHAR}
+        and t1.cell_id=t2.cell_id and t2.state='1'
+    </select>
+
+    <update id="changeDetailState" parameterType="java.lang.String">
+        UPDATE store_detail SET state=#{newState,jdbcType=VARCHAR}
+        WHERE cell_id=#{cellId,jdbcType=VARCHAR} and state=#{currentState,jdbcType=VARCHAR}
+    </update>
+
+    <select id="queryStoredItem" resultMap="StoreDetailMap" parameterType="java.lang.String" >
+        SELECT <include refid="Base_Column_List" />
+        FROM store_detail
+        WHERE deliverer_id=#{celdelivererId,jdbcType=VARCHAR} AND detail_id=#{detailId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="queryCellId" resultType="java.lang.String" parameterType="com.zmsk.smartbox.pojo.StoreDetail" >
+        SELECT cell_id FROM store_detail WHERE detail_id=#{detailId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="queryUserStateByTakeCode" resultType="java.lang.String" parameterType="java.lang.String" >
+        select
+          t1.state
+        from
+          user t1, store_detail t2,cell t3
+        where
+          t2.take_code=#{takeCode,jdbcType=VARCHAR}
+          and t3.box_id=#{boxId,jdbcType=VARCHAR}
+          and t2.receiver_id=t1.user_id
+          and t2.cell_id=t3.cell_id
+
+    </select>
+
+</mapper>

@@ -1,4 +1,4 @@
-package com.zmsk.smartbox.common.exception;
+package com.zmsk.smartbox.controller.common.exception;
 
 import com.alibaba.fastjson.JSON;
 import org.springframework.http.HttpStatus;

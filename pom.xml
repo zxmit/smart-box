@@ -80,14 +80,6 @@
       <version>${httpclient.version}</version>
     </dependency>
 
-    <!-- 单元测试 -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-
     <!-- 日志处理 -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -214,6 +206,11 @@
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring.version}</version>
     </dependency>
 
   </dependencies>

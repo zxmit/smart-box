@@ -1,0 +1,107 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zmsk.smartbox.mapper.CellMapper" >
+
+    <resultMap id="BaseResultMap" type="com.zmsk.smartbox.pojo.Cell" >
+        <id column="cell_id" property="cellId" jdbcType="VARCHAR" />
+        <result column="box_id" property="boxId" jdbcType="VARCHAR" />
+        <result column="cell_type" property="cellType" jdbcType="VARCHAR" />
+        <result column="cell_num" property="cellNum" jdbcType="CHAR" />
+        <result column="on_use" property="onUse" jdbcType="VARCHAR" />
+        <result column="cell_type_name" property="typeName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="cellCountMap" type="com.zmsk.smartbox.pojo.CellCount">
+        <result column="type_id" property="typeId" jdbcType="VARCHAR" />
+        <result column="cell_type_name" property="typeName" jdbcType="VARCHAR"  />
+        <result column="cell_count" property="count" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List" >
+        cell_id, box_id, cell_type, cell_num, on_use
+    </sql>
+
+    <select id="queryAvailableCount" resultMap="cellCountMap" parameterType="java.lang.String" >
+        select
+            t2.type_id,count(t2.cell_type_name) as cell_count,t2.cell_type_name
+        from
+            cell as t1,cell_type as t2
+        where
+            t1.cell_type=type_id and t1.on_use='0' and t1.box_id=#{boxId,jdbcType=VARCHAR} group by(t2.type_id);
+    </select>
+
+    <select id="queryRandomAvailableCell" resultMap="BaseResultMap" parameterType="java.lang.String">
+      select <include refid="Base_Column_List" /> from cell where on_use='0' and box_id=#{boxId,jdbcType=VARCHAR} and cell_type=#{typeId,jdbcType=VARCHAR} limit 1;
+    </select>
+
+    <select id="queryCellId" resultType="java.lang.String" parameterType="java.lang.String" >
+      SELECT cell_id from cell WHERE cell_num=#{cellNum,jdbcType=VARCHAR} and box_id=#{boxId,jdbcType=VARCHAR}
+    </select>
+
+    <update id="holdCell" parameterType="java.lang.String" >
+        update cell set on_use='1' where cell_id=#{cellId,jdbcType=VARCHAR}
+    </update>
+
+    <update id="releaseCell" parameterType="java.lang.String" >
+        update cell set on_use='0' where cell_id=#{cellId,jdbcType=VARCHAR}
+    </update>
+
+</mapper>

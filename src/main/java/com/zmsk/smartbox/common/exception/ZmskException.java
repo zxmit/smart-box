@@ -1,4 +1,4 @@
-package com.zmsk.smartbox.common.exception;
+package com.zmsk.smartbox.controller.common.exception;
 
 public abstract class ZmskException extends RuntimeException {
 

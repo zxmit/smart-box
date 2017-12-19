@@ -2,14 +2,13 @@ package com.zmsk.smartbox.service.impl;
 
 import com.zmsk.smartbox.mapper.TestMapper;
 import com.zmsk.smartbox.pojo.Test;
-import com.zmsk.smartbox.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class TestServiceImpl implements TestService{
+public class TestServiceImpl implements com.zmsk.smartbox.service.TestService {
 
     @Autowired
     private TestMapper testMapper;
